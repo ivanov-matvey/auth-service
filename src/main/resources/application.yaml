@@ -1,6 +1,6 @@
 ktor:
   application:
     modules:
-      - dev.matvenoid.ApplicationKt.module
+      - infrastructure.config.ApplicationKt.module
   deployment:
     port: $AUTH_SERVICE_PORT

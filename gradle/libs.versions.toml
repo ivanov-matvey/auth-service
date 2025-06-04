@@ -5,6 +5,8 @@ logback = "1.5.13"
 kotlinx-datetime = "0.6.2"
 exposed = "0.61.0"
 postgresql = "42.7.6"
+lettuce = "6.7.0.RELEASE"
+micrometer = "1.15.0"
 
 
 [libraries]
@@ -23,6 +25,8 @@ exposed-dao = { group = "org.jetbrains.exposed", name = "exposed-dao", version.r
 exposed-jdbc = { group = "org.jetbrains.exposed", name = "exposed-jdbc", version.ref = "exposed" }
 exposed-kotlin-datetime = { group = "org.jetbrains.exposed", name = "exposed-kotlin-datetime", version.ref = "exposed" }
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
+lettuce-core = { group = "io.lettuce", name = "lettuce-core", version.ref = "lettuce" }
+micrometer-core = { group = "io.micrometer", name = "micrometer-core", version.ref = "micrometer" }
 
 
 [plugins]

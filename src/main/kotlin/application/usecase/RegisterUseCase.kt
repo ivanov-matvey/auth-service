@@ -1,23 +1,30 @@
 package application.usecase
 
 import domain.repository.UserRepository
+import domain.service.EmailValidationService
+import infrastructure.service.RedisService
 
 class RegisterUseCase(
-    private val repository: UserRepository
+    private val userRepository: UserRepository,
+    private val emailValidationService: EmailValidationService,
+    private val redisService: RedisService
 ) {
     operator fun invoke(email: String) {
-        if (!isValidEmail(email)) {
+        if (!emailValidationService.isValid(email)) {
             throw IllegalArgumentException("Invalid email")
         }
 
-        val user = repository.findByEmail(email)
+        val user = userRepository.findByEmail(email)
         if (user != null) {
             throw IllegalArgumentException("User already exists")
         }
+
+        val verificationCode = generateVerificationCode()
+        redisService.setex(email, verificationCode, 600)
+
     }
 
-    private fun isValidEmail(email: String): Boolean {
-        val regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$".toRegex()
-        return regex.matches(email)
+    private fun generateVerificationCode(): String {
+        return (100000..999999).random().toString()
     }
 }

@@ -1,7 +1,9 @@
 package infrastructure.config
 
 import application.usecase.RegisterUseCase
+import domain.service.EmailValidationService
 import infrastructure.persistence.repository.PostgresUserRepository
+import infrastructure.service.RedisService
 import presentation.http.configureRouting
 import io.ktor.server.application.*
 import io.ktor.server.netty.EngineMain
@@ -15,8 +17,11 @@ fun Application.module() {
     configureSerialization()
     configureDatabase()
 
-    val userRepository = PostgresUserRepository()
-    val registerUseCase = RegisterUseCase(userRepository)
+    val registerUseCase = RegisterUseCase(
+        userRepository = PostgresUserRepository(),
+        emailValidationService = EmailValidationService(),
+        redisService = RedisService(RedisProvider.commands)
+    )
 
     configureRouting(registerUseCase)
 }

@@ -5,17 +5,15 @@ import domain.repository.UserRepository
 class RegisterUseCase(
     private val repository: UserRepository
 ) {
-    operator fun invoke(email: String): Result<Unit> {
+    operator fun invoke(email: String) {
         if (!isValidEmail(email)) {
-            return Result.failure(IllegalArgumentException("Invalid email"))
+            throw IllegalArgumentException("Invalid email")
         }
 
         val user = repository.findByEmail(email)
         if (user != null) {
-            return Result.failure(IllegalArgumentException("User already exists"))
+            throw IllegalArgumentException("User already exists")
         }
-
-        return Result.success(Unit)
     }
 
     private fun isValidEmail(email: String): Boolean {

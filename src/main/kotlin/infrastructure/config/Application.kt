@@ -11,6 +11,10 @@ fun main(args: Array<String>) {
 }
 
 fun Application.module() {
+    configureStatusPages()
+    configureSerialization()
+    configureDatabase()
+
     val userRepository = PostgresUserRepository()
     val registerUseCase = RegisterUseCase(userRepository)
 

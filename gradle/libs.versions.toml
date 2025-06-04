@@ -7,6 +7,8 @@ exposed = "0.61.0"
 postgresql = "42.7.6"
 lettuce = "6.7.0.RELEASE"
 micrometer = "1.15.0"
+jakarta = "2.0.1"
+thymeleaf = "3.1.3.RELEASE"
 
 
 [libraries]
@@ -27,6 +29,8 @@ exposed-kotlin-datetime = { group = "org.jetbrains.exposed", name = "exposed-kot
 postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }
 lettuce-core = { group = "io.lettuce", name = "lettuce-core", version.ref = "lettuce" }
 micrometer-core = { group = "io.micrometer", name = "micrometer-core", version.ref = "micrometer" }
+jakarta-mail = { group = "com.sun.mail", name = "jakarta.mail", version.ref = "jakarta" }
+thymeleaf = { group = "org.thymeleaf", name = "thymeleaf", version.ref = "thymeleaf" }
 
 
 [plugins]

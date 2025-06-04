@@ -3,7 +3,8 @@ package infrastructure.config
 import application.usecase.RegisterUseCase
 import domain.service.EmailValidationService
 import infrastructure.persistence.repository.PostgresUserRepository
-import infrastructure.service.RedisService
+import infrastructure.service.MailServiceImpl
+import infrastructure.service.RedisServiceImpl
 import presentation.http.configureRouting
 import io.ktor.server.application.*
 import io.ktor.server.netty.EngineMain
@@ -19,8 +20,9 @@ fun Application.module() {
 
     val registerUseCase = RegisterUseCase(
         userRepository = PostgresUserRepository(),
+        redisService = RedisServiceImpl(RedisProvider.commands),
         emailValidationService = EmailValidationService(),
-        redisService = RedisService(RedisProvider.commands)
+        mailService = MailServiceImpl
     )
 
     configureRouting(registerUseCase)

@@ -27,6 +27,8 @@ dependencies {
     implementation(libs.postgresql)
     implementation(libs.lettuce.core)
     implementation(libs.micrometer.core)
+    implementation(libs.jakarta.mail)
+    implementation(libs.thymeleaf)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
 }

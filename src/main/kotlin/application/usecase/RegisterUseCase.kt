@@ -2,12 +2,14 @@ package application.usecase
 
 import domain.repository.UserRepository
 import domain.service.EmailValidationService
-import infrastructure.service.RedisService
+import domain.service.MailService
+import domain.service.RedisService
 
 class RegisterUseCase(
     private val userRepository: UserRepository,
+    private val redisService: RedisService,
     private val emailValidationService: EmailValidationService,
-    private val redisService: RedisService
+    private val mailService: MailService
 ) {
     operator fun invoke(email: String) {
         if (!emailValidationService.isValid(email)) {
@@ -22,6 +24,7 @@ class RegisterUseCase(
         val verificationCode = generateVerificationCode()
         redisService.setex(email, verificationCode, 600)
 
+        mailService.sendVerificationEmail(email, verificationCode)
     }
 
     private fun generateVerificationCode(): String {

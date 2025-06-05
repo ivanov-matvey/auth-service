@@ -1,29 +1,36 @@
 package presentation.http
 
 import application.usecase.RegisterUseCase
+import application.usecase.RegisterVerifyUseCase
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
+import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import presentation.dto.RegisterRequest
+import presentation.dto.RegisterVerifyRequest
 
 fun Route.authRoutes(
     registerUseCase: RegisterUseCase,
+    registerVerifyUseCase: RegisterVerifyUseCase,
 ) {
     post("/register") {
         val request = call.receive<RegisterRequest>()
 
-        try {
-            registerUseCase.invoke(request.email)
-        } catch (e: Exception) {
-            call.respond(HttpStatusCode.BadRequest, e.localizedMessage)
-        }
+        registerUseCase.invoke(request.email)
 
         return@post call.respond(HttpStatusCode.OK)
     }
 
     post("/verify") {
-        TODO("Not yet implemented")
+        val request = call.receive<RegisterVerifyRequest>()
+
+        val token = registerVerifyUseCase.invoke(request.email, request.code)
+        call.response.header(
+            name = "token",
+            value = token.toString()
+        )
+        return@post call.respond(HttpStatusCode.OK)
     }
 
     post("/confirm-registration") {

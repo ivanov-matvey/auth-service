@@ -1,5 +1,6 @@
 package application.usecase
 
+import application.util.redisLimiter
 import domain.repository.UserRepository
 import domain.service.EmailValidationService
 import domain.service.MailService
@@ -31,9 +32,13 @@ class RegisterUseCase(
         val now = System.currentTimeMillis().toString()
         redisService.setex(lastRequestKey, now, 60)
 
-        val currentCount = redisService.get(requestCountKey)?.toIntOrNull() ?: 0
-        val newCount = currentCount + 1
-        redisService.setex(requestCountKey, newCount.toString(), 3600)
+        redisLimiter(
+            redisService = redisService,
+            key = requestCountKey,
+            limit = 5,
+            message = { ttl -> "Слишком много запросов. Повторите попытку через ${ttl/60} минут." },
+            ttlSeconds = 3600
+        )
 
         mailService.sendVerificationEmail(email, verificationCode)
     }

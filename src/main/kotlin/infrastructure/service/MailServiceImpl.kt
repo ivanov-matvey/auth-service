@@ -11,19 +11,23 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import java.util.Properties
 
 object MailServiceImpl : MailService {
-    private val username = System.getenv("MAIL_USER")
-    private val password = System.getenv("MAIL_PASSWORD")
+    private val smtpLogin = System.getenv("SMTP_LOGIN")
+    private val smtpPassword = System.getenv("SMTP_PASSWORD")
+    private val smtpHost = System.getenv("SMTP_HOST")
+    private val smtpPort = System.getenv("SMTP_PORT")
+
+    private val mailUser = System.getenv("MAIL_USER")
 
     private val props = Properties().apply {
         put("mail.smtp.auth", "true")
         put("mail.smtp.starttls.enable", "true")
-        put("mail.smtp.host", "smtp.gmail.com")
-        put("mail.smtp.port", "587")
+        put("mail.smtp.host", smtpHost)
+        put("mail.smtp.port", smtpPort)
     }
 
     private val session: Session = Session.getInstance(props, object : Authenticator() {
         override fun getPasswordAuthentication(): PasswordAuthentication {
-            return PasswordAuthentication(username, password)
+            return PasswordAuthentication(smtpLogin, smtpPassword)
         }
     })
 
@@ -46,9 +50,9 @@ object MailServiceImpl : MailService {
         val htmlContent = templateEngine.process("email-template", context)
 
         val message = MimeMessage(session).apply {
-            setFrom(InternetAddress(username))
+            setFrom(InternetAddress(mailUser))
             setRecipients(Message.RecipientType.TO, InternetAddress.parse(to))
-            subject = "Код для подтверждения регистрации"
+            subject = "Код подтверждения регистрации"
             setContent(htmlContent, "text/html; charset=utf-8")
         }
 

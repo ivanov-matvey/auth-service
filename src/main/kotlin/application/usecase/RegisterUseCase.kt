@@ -21,8 +21,19 @@ class RegisterUseCase(
             throw IllegalArgumentException("User already exists")
         }
 
+        val confirmKey = "email:confirm:$email"
+        val lastRequestKey = "email:last-request:$email"
+        val requestCountKey = "email:request-count:$email"
+
         val verificationCode = generateVerificationCode()
-        redisService.setex(email, verificationCode, 600)
+        redisService.setex(confirmKey, verificationCode, 600)
+
+        val now = System.currentTimeMillis().toString()
+        redisService.setex(lastRequestKey, now, 60)
+
+        val currentCount = redisService.get(requestCountKey)?.toIntOrNull() ?: 0
+        val newCount = currentCount + 1
+        redisService.setex(requestCountKey, newCount.toString(), 3600)
 
         mailService.sendVerificationEmail(email, verificationCode)
     }

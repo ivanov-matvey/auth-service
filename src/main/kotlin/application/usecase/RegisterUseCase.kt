@@ -14,12 +14,12 @@ class RegisterUseCase(
 ) {
     operator fun invoke(email: String) {
         if (!emailValidationService.isValid(email)) {
-            throw IllegalArgumentException("Invalid email")
+            throw IllegalArgumentException("Неверный адрес электронной почты.")
         }
 
         val user = userRepository.findByEmail(email)
         if (user != null) {
-            throw IllegalArgumentException("User already exists")
+            throw IllegalArgumentException("Пользователь с такой эл.почтой уже существует.")
         }
 
         val confirmKey = "email:confirm:$email"

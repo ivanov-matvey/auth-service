@@ -27,7 +27,7 @@ class RegisterVerifyUseCase(
         }
 
         val token = UUID.randomUUID()
-        redisService.setex(token.toString(), email, 600)
+        redisService.setex("register:token:$token", email, 600)
 
         redisService.del(confirmKey)
         redisService.del(requestCountKey)

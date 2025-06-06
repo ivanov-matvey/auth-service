@@ -2,6 +2,8 @@ package application.usecase
 
 import application.util.redisLimiter
 import domain.service.RedisService
+import shared.InvalidConfirmationCodeException
+import shared.TooManyAttemptsException
 import java.util.UUID
 
 class RegisterVerifyUseCase(
@@ -17,13 +19,13 @@ class RegisterVerifyUseCase(
             redisService = redisService,
             key = verifyAttemptsKey,
             limit = 5,
-            message = { ttl -> "Слишком много неудачных попыток. Повторите попытку через ${ttl/60} минут." },
+            exception = { ttl -> TooManyAttemptsException(ttl) },
             ttlSeconds = 600
         )
 
         val correctCode = redisService.get(confirmKey)
         if (code != correctCode) {
-            throw IllegalArgumentException("Неверный код.")
+            throw InvalidConfirmationCodeException()
         }
 
         val token = UUID.randomUUID()

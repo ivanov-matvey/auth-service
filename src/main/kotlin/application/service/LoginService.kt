@@ -1,18 +1,18 @@
 package application.service
 
 import application.usecase.CodeVerifyUseCase
-import application.usecase.RegisterUseCase
+import application.usecase.LoginByCodeUseCase
+import presentation.dto.AuthTokens
 import shared.InvalidConfirmationCodeException
-import java.util.UUID
 
-class RegisterService(
+class LoginService(
     private val codeVerifyUseCase: CodeVerifyUseCase,
-    private val registerVerifyUseCase: RegisterUseCase,
+    private val loginByCodeUseCase: LoginByCodeUseCase,
 ) {
-    fun getToken(email: String, code: String): UUID {
+    fun getTokensByCode(email: String, code: String): AuthTokens {
         val verified = codeVerifyUseCase(email, code)
 
-        if (verified) return registerVerifyUseCase(email)
+        if (verified) return loginByCodeUseCase(email)
         else throw InvalidConfirmationCodeException()
     }
 }

@@ -3,7 +3,7 @@ package application.usecase
 import domain.service.RedisService
 import java.util.UUID
 
-class RegisterVerifyUseCase(
+class RegisterUseCase(
     private val redisService: RedisService
 ) {
     operator fun invoke(email: String): UUID {

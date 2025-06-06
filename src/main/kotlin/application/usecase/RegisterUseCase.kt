@@ -26,14 +26,10 @@ class RegisterUseCase(
         }
 
         val confirmKey = "email:confirm:$email"
-        val lastRequestKey = "email:last-request:$email"
         val requestCountKey = "email:request-count:$email"
 
         val verificationCode = generateVerificationCode()
         redisService.setex(confirmKey, verificationCode, 600)
-
-        val now = System.currentTimeMillis().toString()
-        redisService.setex(lastRequestKey, now, 60)
 
         redisLimiter(
             redisService = redisService,

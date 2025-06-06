@@ -7,14 +7,13 @@ fun redisLimiter(
     redisService: RedisService,
     key: String,
     limit: Int,
-    message: (Long) -> String,
+    exception: (Long) -> RuntimeException,
     ttlSeconds: Long
 ) {
     val current = redisService.get(key)?.toIntOrNull() ?: 0
     if (current >= limit) {
         val ttl = redisService.ttl(key)
-        throw IllegalArgumentException(message(ttl))
+        throw exception(ttl)
     }
     redisService.setex(key, (current + 1).toString(), ttlSeconds)
-
 }

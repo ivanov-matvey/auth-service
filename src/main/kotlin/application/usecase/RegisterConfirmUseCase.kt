@@ -5,6 +5,7 @@ import domain.repository.UserRepository
 import domain.service.RedisService
 import kotlinx.datetime.LocalDate
 import org.mindrot.jbcrypt.BCrypt
+import shared.InvalidRegistrationTokenException
 import java.util.UUID
 
 class RegisterConfirmUseCase(
@@ -21,7 +22,7 @@ class RegisterConfirmUseCase(
 
         val email = redisService.get(registerKey)
         if (email == null) {
-            throw IllegalArgumentException("Неверный токен регистрации.")
+            throw InvalidRegistrationTokenException()
         }
 
         val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())

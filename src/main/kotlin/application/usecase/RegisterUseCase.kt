@@ -5,6 +5,9 @@ import domain.repository.UserRepository
 import domain.service.EmailValidationService
 import domain.service.MailService
 import domain.service.RedisService
+import shared.InvalidEmailException
+import shared.TooManyRequestsException
+import shared.UserAlreadyExistsException
 
 class RegisterUseCase(
     private val userRepository: UserRepository,
@@ -14,12 +17,12 @@ class RegisterUseCase(
 ) {
     operator fun invoke(email: String) {
         if (!emailValidationService.isValid(email)) {
-            throw IllegalArgumentException("Invalid email")
+            throw InvalidEmailException()
         }
 
         val user = userRepository.findByEmail(email)
         if (user != null) {
-            throw IllegalArgumentException("User already exists")
+            throw UserAlreadyExistsException()
         }
 
         val confirmKey = "email:confirm:$email"
@@ -36,7 +39,7 @@ class RegisterUseCase(
             redisService = redisService,
             key = requestCountKey,
             limit = 5,
-            message = { ttl -> "Слишком много запросов. Повторите попытку через ${ttl/60} минут." },
+            exception = { ttl -> TooManyRequestsException(ttl) },
             ttlSeconds = 3600
         )
 

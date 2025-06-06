@@ -15,4 +15,15 @@ class PostgresUserRepository: UserRepository {
             .map(::daoToModel)
             .firstOrNull()
     }
+
+    override fun save(user: User): User = transaction {
+        daoToModel(
+            UserDAO.new {
+                email = user.email
+                password = user.password
+                fullName = user.fullName
+                birthday = user.birthday
+            }
+        )
+    }
 }

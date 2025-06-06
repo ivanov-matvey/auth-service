@@ -29,6 +29,7 @@ dependencies {
     implementation(libs.micrometer.core)
     implementation(libs.jakarta.mail)
     implementation(libs.thymeleaf)
+    implementation(libs.jbcrypt)
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.kotlin.test.junit)
 }

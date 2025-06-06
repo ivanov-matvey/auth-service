@@ -1,5 +1,6 @@
 package infrastructure.config
 
+import application.usecase.RegisterConfirmUseCase
 import application.usecase.RegisterUseCase
 import application.usecase.RegisterVerifyUseCase
 import domain.service.EmailValidationService
@@ -28,9 +29,14 @@ fun Application.module() {
     val registerVerifyUseCase = RegisterVerifyUseCase(
         redisService = RedisServiceImpl(RedisProvider.commands)
     )
+    val registerConfirmUseCase = RegisterConfirmUseCase(
+        userRepository = PostgresUserRepository(),
+        redisService = RedisServiceImpl(RedisProvider.commands)
+    )
 
     configureRouting(
         registerUseCase,
-        registerVerifyUseCase
+        registerVerifyUseCase,
+        registerConfirmUseCase
     )
 }

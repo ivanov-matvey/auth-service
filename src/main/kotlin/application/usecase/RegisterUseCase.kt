@@ -1,0 +1,44 @@
+package application.usecase
+
+import domain.repository.UserRepository
+import domain.service.EmailValidationService
+import domain.service.MailService
+import domain.service.RedisService
+
+class RegisterUseCase(
+    private val userRepository: UserRepository,
+    private val redisService: RedisService,
+    private val emailValidationService: EmailValidationService,
+    private val mailService: MailService
+) {
+    operator fun invoke(email: String) {
+        if (!emailValidationService.isValid(email)) {
+            throw IllegalArgumentException("Invalid email")
+        }
+
+        val user = userRepository.findByEmail(email)
+        if (user != null) {
+            throw IllegalArgumentException("User already exists")
+        }
+
+        val confirmKey = "email:confirm:$email"
+        val lastRequestKey = "email:last-request:$email"
+        val requestCountKey = "email:request-count:$email"
+
+        val verificationCode = generateVerificationCode()
+        redisService.setex(confirmKey, verificationCode, 600)
+
+        val now = System.currentTimeMillis().toString()
+        redisService.setex(lastRequestKey, now, 60)
+
+        val currentCount = redisService.get(requestCountKey)?.toIntOrNull() ?: 0
+        val newCount = currentCount + 1
+        redisService.setex(requestCountKey, newCount.toString(), 3600)
+
+        mailService.sendVerificationEmail(email, verificationCode)
+    }
+
+    private fun generateVerificationCode(): String {
+        return (100000..999999).random().toString()
+    }
+}

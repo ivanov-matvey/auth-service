@@ -1,12 +1,14 @@
 package presentation.http
 
 import application.usecase.RegisterUseCase
+import application.usecase.RegisterVerifyUseCase
 import io.ktor.server.application.*
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.*
 
 fun Application.configureRouting(
     registerUseCase: RegisterUseCase,
+    registerVerifyUseCase: RegisterVerifyUseCase
 ) {
     routing {
         get("/") {
@@ -14,7 +16,10 @@ fun Application.configureRouting(
         }
 
         route("/auth") {
-            authRoutes(registerUseCase)
+            authRoutes(
+                registerUseCase,
+                registerVerifyUseCase
+            )
         }
     }
 }

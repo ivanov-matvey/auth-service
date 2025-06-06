@@ -1,6 +1,7 @@
 package infrastructure.config
 
 import application.usecase.RegisterUseCase
+import application.usecase.RegisterVerifyUseCase
 import domain.service.EmailValidationService
 import infrastructure.persistence.repository.PostgresUserRepository
 import infrastructure.service.MailServiceImpl
@@ -24,6 +25,12 @@ fun Application.module() {
         emailValidationService = EmailValidationService(),
         mailService = MailServiceImpl
     )
+    val registerVerifyUseCase = RegisterVerifyUseCase(
+        redisService = RedisServiceImpl(RedisProvider.commands)
+    )
 
-    configureRouting(registerUseCase)
+    configureRouting(
+        registerUseCase,
+        registerVerifyUseCase
+    )
 }

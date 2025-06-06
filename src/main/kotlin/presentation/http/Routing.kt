@@ -1,26 +1,21 @@
 package presentation.http
 
+import application.service.RegisterService
 import application.usecase.RegisterConfirmUseCase
-import application.usecase.RegisterUseCase
-import application.usecase.RegisterVerifyUseCase
+import application.usecase.CodeSendUseCase
 import io.ktor.server.application.*
-import io.ktor.server.response.respondText
 import io.ktor.server.routing.*
 
 fun Application.configureRouting(
-    registerUseCase: RegisterUseCase,
-    registerVerifyUseCase: RegisterVerifyUseCase,
+    codeSendUseCase: CodeSendUseCase,
+    registerService: RegisterService,
     registerConfirmUseCase: RegisterConfirmUseCase
 ) {
     routing {
-        get("/") {
-            call.respondText("Hello World!")
-        }
-
         route("/auth") {
             route("/register") {
                 registerRoutes(
-                    registerVerifyUseCase,
+                    registerService,
                     registerConfirmUseCase
                 )
             }
@@ -30,7 +25,7 @@ fun Application.configureRouting(
             }
 
             route("/code") {
-                codeRoutes(registerUseCase)
+                codeRoutes(codeSendUseCase)
             }
 
             route("/refresh") {

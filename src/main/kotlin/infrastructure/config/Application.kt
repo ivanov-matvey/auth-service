@@ -1,7 +1,9 @@
 package infrastructure.config
 
+import application.service.RegisterService
 import application.usecase.RegisterConfirmUseCase
-import application.usecase.RegisterUseCase
+import application.usecase.CodeSendUseCase
+import application.usecase.CodeVerifyUseCase
 import application.usecase.RegisterVerifyUseCase
 import domain.service.EmailValidationService
 import infrastructure.persistence.repository.PostgresUserRepository
@@ -20,23 +22,34 @@ fun Application.module() {
     configureSerialization()
     configureDatabase()
 
-    val registerUseCase = RegisterUseCase(
-        userRepository = PostgresUserRepository(),
-        redisService = RedisServiceImpl(RedisProvider.commands),
-        emailValidationService = EmailValidationService(),
+    val redisService = RedisServiceImpl(RedisProvider.commands)
+    val userRepository = PostgresUserRepository()
+    val emailValidationService = EmailValidationService()
+
+    val codeSendUseCase = CodeSendUseCase(
+        userRepository = userRepository,
+        redisService = redisService,
+        emailValidationService = emailValidationService,
         mailService = MailServiceImpl
     )
-    val registerVerifyUseCase = RegisterVerifyUseCase(
-        redisService = RedisServiceImpl(RedisProvider.commands)
+
+    val codeVerifyUseCase = CodeVerifyUseCase(redisService)
+
+    val registerVerifyUseCase = RegisterVerifyUseCase(redisService)
+
+    val registerService = RegisterService(
+        codeVerifyUseCase = codeVerifyUseCase,
+        registerVerifyUseCase = registerVerifyUseCase
     )
+
     val registerConfirmUseCase = RegisterConfirmUseCase(
-        userRepository = PostgresUserRepository(),
-        redisService = RedisServiceImpl(RedisProvider.commands)
+        userRepository = userRepository,
+        redisService = redisService
     )
 
     configureRouting(
-        registerUseCase,
-        registerVerifyUseCase,
+        codeSendUseCase,
+        registerService,
         registerConfirmUseCase
     )
 }

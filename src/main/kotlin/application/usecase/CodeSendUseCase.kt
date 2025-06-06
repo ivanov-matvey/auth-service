@@ -9,7 +9,7 @@ import shared.InvalidEmailException
 import shared.TooManyRequestsException
 import shared.UserAlreadyExistsException
 
-class RegisterUseCase(
+class CodeSendUseCase(
     private val userRepository: UserRepository,
     private val redisService: RedisService,
     private val emailValidationService: EmailValidationService,

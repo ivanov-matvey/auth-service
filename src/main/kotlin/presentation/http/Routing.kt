@@ -18,11 +18,24 @@ fun Application.configureRouting(
         }
 
         route("/auth") {
-            authRoutes(
-                registerUseCase,
-                registerVerifyUseCase,
-                registerConfirmUseCase
-            )
+            route("/register") {
+                registerRoutes(
+                    registerVerifyUseCase,
+                    registerConfirmUseCase
+                )
+            }
+
+            route("/login") {
+                loginRoutes()
+            }
+
+            route("/code") {
+                codeRoutes(registerUseCase)
+            }
+
+            route("/refresh") {
+                refreshTokenRoutes()
+            }
         }
     }
 }

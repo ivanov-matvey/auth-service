@@ -1,12 +1,13 @@
 package application.usecase
 
 import domain.service.RedisService
+import presentation.dto.RegisterToken
 import java.util.UUID
 
-class RegisterUseCase(
+class GenerateRegisterTokenUseCase(
     private val redisService: RedisService
 ) {
-    operator fun invoke(email: String): UUID {
+    operator fun invoke(email: String): RegisterToken {
         val confirmKey = "email:confirm:$email"
         val requestCountKey = "email:request-count:$email"
         val lastRequestKey = "email:last-request:$email"
@@ -20,6 +21,6 @@ class RegisterUseCase(
         redisService.del(lastRequestKey)
         redisService.del(verifyAttemptsKey)
 
-        return token
+        return RegisterToken(token)
     }
 }

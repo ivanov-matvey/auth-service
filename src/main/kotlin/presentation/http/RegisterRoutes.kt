@@ -1,9 +1,8 @@
 package presentation.http
 
-import application.service.RegisterService
-import application.usecase.CodeSendUseCase
+import application.service.RegisterByCodeService
+import application.service.RegisterByCodeVerifyService
 import application.usecase.RegisterConfirmUseCase
-import application.usecase.UserExistsUseCase
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
 import io.ktor.server.response.header
@@ -15,16 +14,14 @@ import presentation.dto.RegisterRequest
 import presentation.mapper.modelToDto
 
 fun Route.registerRoutes(
-    registerService: RegisterService,
-    registerConfirmUseCase: RegisterConfirmUseCase,
-    userExistsUseCase: UserExistsUseCase,
-    codeSendUseCase: CodeSendUseCase
+    registerByCodeService: RegisterByCodeService,
+    registerByCodeVerifyService: RegisterByCodeVerifyService,
+    registerConfirmUseCase: RegisterConfirmUseCase
 ) {
     post {
         val request = call.receive<RegisterRequest>()
 
-        userExistsUseCase(request.email)
-        codeSendUseCase(request.email)
+        registerByCodeService(request.email)
 
         return@post call.respond(HttpStatusCode.OK)
     }
@@ -32,8 +29,15 @@ fun Route.registerRoutes(
     post("/verify") {
         val request = call.receive<CodeVerifyRequest>()
 
-        val token = registerService.getToken(request.email, request.code)
-        call.response.header(name = "token", value = token.toString())
+        val token = registerByCodeVerifyService(
+            request.email,
+            request.code
+        ).token
+        call.response.header(
+            name = "token",
+            value = token.toString()
+        )
+
         return@post call.respond(HttpStatusCode.OK)
     }
 

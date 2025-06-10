@@ -27,3 +27,7 @@ class InvalidEmailException() : RuntimeException(
 class UserAlreadyExistsException() : RuntimeException(
     "Пользователь с такой электронной почтой уже существует."
 )
+
+class UserNotFoundException() : RuntimeException(
+    "Пользователь не существует."
+)

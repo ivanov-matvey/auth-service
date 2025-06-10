@@ -1,22 +1,15 @@
 package application.usecase
 
 import application.util.redisLimiter
-import domain.service.EmailValidationService
 import domain.service.MailService
 import domain.service.RedisService
-import shared.InvalidEmailException
 import shared.TooManyRequestsException
 
-class CodeSendUseCase(
+class SendCodeUseCase(
     private val redisService: RedisService,
-    private val emailValidationService: EmailValidationService,
     private val mailService: MailService
 ) {
     operator fun invoke(email: String) {
-        if (!emailValidationService.isValid(email)) {
-            throw InvalidEmailException()
-        }
-
         val confirmKey = "email:confirm:$email"
         val requestCountKey = "email:request-count:$email"
 

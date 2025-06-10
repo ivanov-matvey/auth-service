@@ -1,35 +1,37 @@
 package presentation.http
 
-import application.service.LoginService
-import application.service.RegisterService
+import application.service.LoginByCodeService
+import application.service.LoginByCodeVerifyService
+import application.service.LoginByPasswordService
+import application.service.RegisterByCodeService
+import application.service.RegisterByCodeVerifyService
 import application.usecase.RegisterConfirmUseCase
-import application.usecase.CodeSendUseCase
-import application.usecase.UserExistsUseCase
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
 fun Application.configureRouting(
-    codeSendUseCase: CodeSendUseCase,
-    registerService: RegisterService,
+    registerByCodeService: RegisterByCodeService,
+    registerByCodeVerifyService: RegisterByCodeVerifyService,
     registerConfirmUseCase: RegisterConfirmUseCase,
-    loginService: LoginService,
-    userExistsUseCase: UserExistsUseCase
+    loginByCodeService: LoginByCodeService,
+    loginByCodeVerifyService: LoginByCodeVerifyService,
+    loginByPasswordService: LoginByPasswordService
 ) {
     routing {
         route("/auth") {
             route("/register") {
                 registerRoutes(
-                    registerService,
-                    registerConfirmUseCase,
-                    userExistsUseCase,
-                    codeSendUseCase
+                    registerByCodeService = registerByCodeService,
+                    registerByCodeVerifyService = registerByCodeVerifyService,
+                    registerConfirmUseCase = registerConfirmUseCase
                 )
             }
 
             route("/login") {
                 loginRoutes(
-                    loginService,
-                    codeSendUseCase
+                    loginByCodeService = loginByCodeService,
+                    loginByCodeVerifyService = loginByCodeVerifyService,
+                    loginByPasswordService = loginByPasswordService
                 )
             }
 

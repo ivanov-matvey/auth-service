@@ -4,7 +4,7 @@ import domain.service.JwtService
 import domain.service.RedisService
 import presentation.dto.AuthTokens
 
-class LoginByCodeUseCase(
+class GenerateAuthTokensUseCase(
     private val redisService: RedisService,
     private val jwtService: JwtService
 ) {

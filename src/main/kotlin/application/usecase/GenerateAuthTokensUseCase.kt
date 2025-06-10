@@ -2,13 +2,13 @@ package application.usecase
 
 import domain.service.JwtService
 import domain.service.RedisService
-import presentation.dto.AuthTokens
+import presentation.dto.AuthTokensDTO
 
 class GenerateAuthTokensUseCase(
     private val redisService: RedisService,
     private val jwtService: JwtService
 ) {
-    operator fun invoke(email: String): AuthTokens {
+    operator fun invoke(email: String): AuthTokensDTO {
         val confirmKey = "email:confirm:$email"
         val requestCountKey = "email:request-count:$email"
         val lastRequestKey = "email:last-request:$email"
@@ -22,6 +22,6 @@ class GenerateAuthTokensUseCase(
         redisService.del(lastRequestKey)
         redisService.del(verifyAttemptsKey)
 
-        return AuthTokens(accessToken, refreshToken)
+        return AuthTokensDTO(accessToken, refreshToken)
     }
 }

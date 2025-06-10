@@ -96,7 +96,12 @@ fun Application.module() {
             emailValidationService = emailValidationService,
         ),
         loginByPasswordUseCase = LoginByPasswordUseCase(
-
+            userRepository = userRepository,
+            redisService = redisService,
+            generateAuthTokensUseCase = GenerateAuthTokensUseCase(
+                redisService = redisService,
+                jwtService = jwtService
+            )
         )
     )
 

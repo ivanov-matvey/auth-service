@@ -3,13 +3,13 @@ package shared
 class TooManyRequestsException(
     retryAfterSeconds: Long
 ) : RuntimeException(
-    "Слишком много запросов. Повторите попытку через ${retryAfterSeconds/ 60} минут."
+    "Слишком много запросов. Повторите попытку через ${retryAfterSeconds/ 60} минут(ы)."
 )
 
 class TooManyAttemptsException(
     retryAfterSeconds: Long
 ) : RuntimeException(
-    "Слишком много неудачных попыток. Повторите попытку через ${retryAfterSeconds/ 60} минут."
+    "Слишком много неудачных попыток. Повторите попытку через ${retryAfterSeconds/ 60} минут(ы)."
 )
 
 class InvalidRegistrationTokenException() : RuntimeException(
@@ -30,4 +30,8 @@ class UserAlreadyExistsException() : RuntimeException(
 
 class UserNotFoundException() : RuntimeException(
     "Пользователь не существует."
+)
+
+class InvalidPasswordException() : RuntimeException(
+    "Неверный пароль."
 )

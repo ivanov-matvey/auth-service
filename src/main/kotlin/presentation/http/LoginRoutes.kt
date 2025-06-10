@@ -48,9 +48,17 @@ fun Route.loginRoutes(
     post("/password") {
         val request = call.receive<LoginByPasswordRequest>()
 
-        loginByPasswordService(
+        val tokens = loginByPasswordService(
             request.email,
             request.password
+        )
+        call.response.header(
+            name = "accessToken",
+            value = tokens.accessToken
+        )
+        call.response.header(
+            name = "refreshToken",
+            value = tokens.refreshToken
         )
 
         return@post call.respond(HttpStatusCode.OK)

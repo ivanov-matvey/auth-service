@@ -3,7 +3,7 @@ package presentation.dto
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RegisterVerifyRequest(
+data class CodeVerifyRequest(
     val email: String,
     val code: String
 )

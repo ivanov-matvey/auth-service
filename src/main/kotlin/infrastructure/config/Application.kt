@@ -1,12 +1,20 @@
 package infrastructure.config
 
-import application.service.RegisterService
+import application.service.LoginByCodeService
+import application.service.LoginByCodeVerifyService
+import application.service.LoginByPasswordService
+import application.service.RegisterByCodeService
+import application.service.RegisterByCodeVerifyService
+import application.usecase.CheckUserUseCase
+import application.usecase.GenerateAuthTokensUseCase
+import application.usecase.GenerateRegisterTokenUseCase
+import application.usecase.LoginByPasswordUseCase
 import application.usecase.RegisterConfirmUseCase
-import application.usecase.CodeSendUseCase
-import application.usecase.CodeVerifyUseCase
-import application.usecase.RegisterVerifyUseCase
+import application.usecase.SendCodeUseCase
+import application.usecase.VerifyCodeUseCase
 import domain.service.EmailValidationService
 import infrastructure.persistence.repository.PostgresUserRepository
+import infrastructure.service.JwtServiceImpl
 import infrastructure.service.MailServiceImpl
 import infrastructure.service.RedisServiceImpl
 import presentation.http.configureRouting
@@ -25,31 +33,85 @@ fun Application.module() {
     val redisService = RedisServiceImpl(RedisProvider.commands)
     val userRepository = PostgresUserRepository()
     val emailValidationService = EmailValidationService()
+    val mailService = MailServiceImpl
+    val jwtService = JwtServiceImpl
 
-    val codeSendUseCase = CodeSendUseCase(
-        userRepository = userRepository,
-        redisService = redisService,
-        emailValidationService = emailValidationService,
-        mailService = MailServiceImpl
+    val registerByCodeService = RegisterByCodeService(
+        checkUserUseCase = CheckUserUseCase(
+            userRepository = userRepository,
+            emailValidationService = emailValidationService,
+        ),
+        sendCodeUseCase = SendCodeUseCase(
+            redisService = redisService,
+            mailService = mailService,
+        ),
     )
 
-    val codeVerifyUseCase = CodeVerifyUseCase(redisService)
-
-    val registerVerifyUseCase = RegisterVerifyUseCase(redisService)
-
-    val registerService = RegisterService(
-        codeVerifyUseCase = codeVerifyUseCase,
-        registerVerifyUseCase = registerVerifyUseCase
+    val registerByCodeVerifyService = RegisterByCodeVerifyService(
+        checkUserUseCase = CheckUserUseCase(
+            userRepository = userRepository,
+            emailValidationService = emailValidationService,
+        ),
+        verifyCodeUseCase = VerifyCodeUseCase(
+            redisService = redisService
+        ),
+        generateRegisterTokenUseCase = GenerateRegisterTokenUseCase(
+            redisService = redisService
+        )
     )
 
     val registerConfirmUseCase = RegisterConfirmUseCase(
-        userRepository = userRepository,
-        redisService = redisService
+        redisService = redisService,
+        userRepository = userRepository
+    )
+
+    val loginByCodeService = LoginByCodeService(
+        checkUserUseCase = CheckUserUseCase(
+            userRepository = userRepository,
+            emailValidationService = emailValidationService
+        ),
+        sendCodeUseCase = SendCodeUseCase(
+            redisService = redisService,
+            mailService = mailService
+        )
+    )
+
+    val loginByCodeVerifyService = LoginByCodeVerifyService(
+        checkUserUseCase = CheckUserUseCase(
+            userRepository = userRepository,
+            emailValidationService = emailValidationService,
+        ),
+        verifyCodeUseCase = VerifyCodeUseCase(
+            redisService = redisService
+        ),
+        generateAuthTokensUseCase = GenerateAuthTokensUseCase(
+            redisService = redisService,
+            jwtService = jwtService
+        )
+    )
+
+    val loginByPasswordService = LoginByPasswordService(
+        checkUserUseCase = CheckUserUseCase(
+            userRepository = userRepository,
+            emailValidationService = emailValidationService,
+        ),
+        loginByPasswordUseCase = LoginByPasswordUseCase(
+            userRepository = userRepository,
+            redisService = redisService,
+            generateAuthTokensUseCase = GenerateAuthTokensUseCase(
+                redisService = redisService,
+                jwtService = jwtService
+            )
+        )
     )
 
     configureRouting(
-        codeSendUseCase,
-        registerService,
-        registerConfirmUseCase
+        registerByCodeService = registerByCodeService,
+        registerByCodeVerifyService = registerByCodeVerifyService,
+        registerConfirmUseCase = registerConfirmUseCase,
+
+        loginByCodeService = loginByCodeService,
+        loginByCodeVerifyService = loginByCodeVerifyService,
+        loginByPasswordService = loginByPasswordService
     )
 }

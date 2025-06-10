@@ -4,7 +4,7 @@ import application.util.redisLimiter
 import domain.service.RedisService
 import shared.TooManyAttemptsException
 
-class CodeVerifyUseCase(
+class VerifyCodeUseCase(
     private val redisService: RedisService
 ) {
     operator fun invoke(email: String, code: String): Boolean {

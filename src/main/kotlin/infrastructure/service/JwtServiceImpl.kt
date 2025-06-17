@@ -32,7 +32,18 @@ object JwtServiceImpl : JwtService {
         return generateToken(email, ttlRefreshToken.toLong())
     }
 
-    override fun validateToken(token: String): Boolean {
-        TODO("Not implemented yet.")
+    override fun validateToken(token: String): String? {
+        return try {
+            val verifier = JWT
+                .require(Algorithm.HMAC256(secret))
+                .withAudience(audience)
+                .withIssuer(issuer)
+                .build()
+
+            val decodedJWT = verifier.verify(token)
+            decodedJWT.getClaim("email").asString()
+        } catch (e: Exception) {
+            null
+        }
     }
 }

@@ -35,3 +35,7 @@ class UserNotFoundException() : RuntimeException(
 class InvalidPasswordException() : RuntimeException(
     "Неверный пароль."
 )
+
+class InvalidRefreshTokenException() : RuntimeException(
+    "Invalid or expired refresh token."
+)

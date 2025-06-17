@@ -5,12 +5,12 @@ import application.service.LoginByCodeVerifyService
 import application.service.LoginByPasswordService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
-import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import presentation.dto.CodeVerifyRequest
 import presentation.dto.LoginByCodeRequest
 import presentation.dto.LoginByPasswordRequest
+import presentation.dto.LoginResponse
 
 fun Route.loginRoutes(
     loginByCodeService: LoginByCodeService,
@@ -33,16 +33,12 @@ fun Route.loginRoutes(
             request.email,
             request.code
         )
-        call.response.header(
-            name = "accessToken",
-            value = tokens.accessToken
+        return@post call.respond(HttpStatusCode.OK,
+            LoginResponse(
+                tokens.accessToken,
+                tokens.refreshToken
+            )
         )
-        call.response.header(
-            name = "refreshToken",
-            value = tokens.refreshToken
-        )
-
-        return@post call.respond(HttpStatusCode.OK)
     }
 
     post("/password") {
@@ -52,15 +48,11 @@ fun Route.loginRoutes(
             request.email,
             request.password
         )
-        call.response.header(
-            name = "accessToken",
-            value = tokens.accessToken
+        return@post call.respond(HttpStatusCode.OK,
+            LoginResponse(
+                tokens.accessToken,
+                tokens.refreshToken
+            )
         )
-        call.response.header(
-            name = "refreshToken",
-            value = tokens.refreshToken
-        )
-
-        return@post call.respond(HttpStatusCode.OK)
     }
 }

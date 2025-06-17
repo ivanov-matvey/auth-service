@@ -3,6 +3,7 @@ package presentation.http
 import application.service.LoginByCodeService
 import application.service.LoginByCodeVerifyService
 import application.service.LoginByPasswordService
+import application.service.RefreshTokenService
 import application.service.RegisterByCodeService
 import application.service.RegisterByCodeVerifyService
 import application.usecase.RegisterConfirmUseCase
@@ -15,7 +16,8 @@ fun Application.configureRouting(
     registerConfirmUseCase: RegisterConfirmUseCase,
     loginByCodeService: LoginByCodeService,
     loginByCodeVerifyService: LoginByCodeVerifyService,
-    loginByPasswordService: LoginByPasswordService
+    loginByPasswordService: LoginByPasswordService,
+    refreshTokenService: RefreshTokenService
 ) {
     routing {
         route("/auth") {
@@ -34,10 +36,12 @@ fun Application.configureRouting(
                     loginByPasswordService = loginByPasswordService
                 )
             }
+        }
 
-            route("/refresh") {
-                refreshTokenRoutes()
-            }
+        route("/refresh") {
+            refreshTokenRoutes(
+                refreshTokenService = refreshTokenService
+            )
         }
     }
 }

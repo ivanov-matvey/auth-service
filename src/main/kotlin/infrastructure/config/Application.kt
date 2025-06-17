@@ -3,17 +3,20 @@ package infrastructure.config
 import application.service.LoginByCodeService
 import application.service.LoginByCodeVerifyService
 import application.service.LoginByPasswordService
+import application.service.RefreshTokenService
 import application.service.RegisterByCodeService
 import application.service.RegisterByCodeVerifyService
 import application.usecase.CheckUserUseCase
-import application.usecase.GenerateAuthTokensUseCase
+import application.usecase.GenerateAccessTokenUseCase
+import application.usecase.GenerateLoginTokensUseCase
 import application.usecase.GenerateRegisterTokenUseCase
 import application.usecase.LoginByPasswordUseCase
 import application.usecase.RegisterConfirmUseCase
 import application.usecase.SendCodeUseCase
+import application.usecase.ValidateTokenUseCase
 import application.usecase.VerifyCodeUseCase
 import domain.service.EmailValidationService
-import infrastructure.persistence.repository.PostgresUserRepository
+import infrastructure.persistence.repository.PostgresUserRepositoryImpl
 import infrastructure.service.JwtServiceImpl
 import infrastructure.service.MailServiceImpl
 import infrastructure.service.RedisServiceImpl
@@ -31,7 +34,7 @@ fun Application.module() {
     configureDatabase()
 
     val redisService = RedisServiceImpl(RedisProvider.commands)
-    val userRepository = PostgresUserRepository()
+    val userRepository = PostgresUserRepositoryImpl()
     val emailValidationService = EmailValidationService()
     val mailService = MailServiceImpl
     val jwtService = JwtServiceImpl
@@ -84,7 +87,7 @@ fun Application.module() {
         verifyCodeUseCase = VerifyCodeUseCase(
             redisService = redisService
         ),
-        generateAuthTokensUseCase = GenerateAuthTokensUseCase(
+        generateLoginTokensUseCase = GenerateLoginTokensUseCase(
             redisService = redisService,
             jwtService = jwtService
         )
@@ -98,10 +101,19 @@ fun Application.module() {
         loginByPasswordUseCase = LoginByPasswordUseCase(
             userRepository = userRepository,
             redisService = redisService,
-            generateAuthTokensUseCase = GenerateAuthTokensUseCase(
+            generateLoginTokensUseCase = GenerateLoginTokensUseCase(
                 redisService = redisService,
                 jwtService = jwtService
             )
+        )
+    )
+
+    val refreshTokenService = RefreshTokenService(
+        validateTokenUseCase = ValidateTokenUseCase(
+            jwtService = jwtService
+        ),
+        generateAccessTokenUseCase = GenerateAccessTokenUseCase(
+            jwtService = jwtService
         )
     )
 
@@ -112,6 +124,8 @@ fun Application.module() {
 
         loginByCodeService = loginByCodeService,
         loginByCodeVerifyService = loginByCodeVerifyService,
-        loginByPasswordService = loginByPasswordService
+        loginByPasswordService = loginByPasswordService,
+
+        refreshTokenService = refreshTokenService
     )
 }

@@ -11,7 +11,7 @@ import shared.TooManyAttemptsException
 class LoginByPasswordUseCase(
     private val userRepository: UserRepository,
     private val redisService: RedisService,
-    private val generateAuthTokensUseCase: GenerateAuthTokensUseCase,
+    private val generateLoginTokensUseCase: GenerateLoginTokensUseCase,
 ) {
     operator fun invoke(email: String, password: String): AuthTokensDTO {
         val user = userRepository.findByEmail(email)!!
@@ -31,6 +31,6 @@ class LoginByPasswordUseCase(
 
         redisService.del(loginFailuresKey)
 
-        return generateAuthTokensUseCase(email)
+        return generateLoginTokensUseCase(email)
     }
 }

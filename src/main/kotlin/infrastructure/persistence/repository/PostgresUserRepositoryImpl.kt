@@ -7,7 +7,7 @@ import infrastructure.persistence.mapper.daoToModel
 import infrastructure.persistence.table.UserTable
 import org.jetbrains.exposed.sql.transactions.transaction
 
-class PostgresUserRepository: UserRepository {
+class PostgresUserRepositoryImpl: UserRepository {
     override fun findByEmail(email: String): User? = transaction {
         UserDAO
             .find { (UserTable.email eq email) }

@@ -5,12 +5,12 @@ import application.service.RegisterByCodeVerifyService
 import application.usecase.RegisterConfirmUseCase
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.request.receive
-import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import presentation.dto.RegisterConfirmRequest
 import presentation.dto.CodeVerifyRequest
 import presentation.dto.RegisterRequest
+import presentation.dto.RegisterVerifyResponse
 import presentation.mapper.modelToDto
 
 fun Route.registerRoutes(
@@ -33,15 +33,12 @@ fun Route.registerRoutes(
             request.email,
             request.code
         ).token
-        call.response.header(
-            name = "token",
-            value = token.toString()
+        return@post call.respond(HttpStatusCode.OK,
+            RegisterVerifyResponse(token.toString())
         )
-
-        return@post call.respond(HttpStatusCode.OK)
     }
 
-    post("/confirm") {
+    post("/complete") {
         val request = call.receive<RegisterConfirmRequest>()
 
         val user = registerConfirmUseCase(

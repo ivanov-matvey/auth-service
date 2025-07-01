@@ -37,5 +37,5 @@ class InvalidPasswordException() : RuntimeException(
 )
 
 class InvalidRefreshTokenException() : RuntimeException(
-    "Invalid or expired refresh token."
+    "Неверный токен обновления."
 )

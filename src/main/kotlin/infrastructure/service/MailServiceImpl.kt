@@ -1,5 +1,6 @@
 package infrastructure.service
 
+import domain.service.CodeType
 import domain.service.MailService
 import jakarta.mail.*
 import jakarta.mail.internet.InternetAddress
@@ -43,16 +44,27 @@ object MailServiceImpl : MailService {
         }
     }
 
-    override fun sendVerificationEmail(to: String, code: String) {
+    override fun sendVerificationEmail(to: String, code: String, type: CodeType) {
+        val templateName = when (type) {
+            CodeType.REGISTER -> "email-template-register"
+            CodeType.LOGIN -> "email-template-login"
+        }
+
+        val subject = when (type) {
+            CodeType.REGISTER -> "Код подтверждения регистрации"
+            CodeType.LOGIN -> "Код подтверждения авторизации"
+        }
+
         val context = Context().apply {
             setVariable("code", code)
         }
-        val htmlContent = templateEngine.process("email-template", context)
+
+        val htmlContent = templateEngine.process(templateName, context)
 
         val message = MimeMessage(session).apply {
             setFrom(InternetAddress(mailUser))
             setRecipients(Message.RecipientType.TO, InternetAddress.parse(to))
-            subject = "Код подтверждения регистрации"
+            this.subject = subject
             setContent(htmlContent, "text/html; charset=utf-8")
         }
 

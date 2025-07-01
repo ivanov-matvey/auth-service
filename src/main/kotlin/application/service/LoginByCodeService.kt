@@ -2,6 +2,7 @@ package application.service
 
 import application.usecase.CheckUserUseCase
 import application.usecase.SendCodeUseCase
+import domain.service.CodeType
 import shared.UserNotFoundException
 
 class LoginByCodeService(
@@ -12,6 +13,6 @@ class LoginByCodeService(
         val isUserExists = checkUserUseCase(email)
         if (!isUserExists) throw UserNotFoundException()
 
-        sendCodeUseCase(email)
+        sendCodeUseCase(email, CodeType.LOGIN)
     }
 }

@@ -3,8 +3,8 @@ package application.usecase
 import domain.model.User
 import domain.repository.UserRepository
 import domain.service.RedisService
-import kotlinx.datetime.LocalDate
-import org.mindrot.jbcrypt.BCrypt
+import domain.value.Birthday
+import domain.value.Password
 import shared.InvalidRegistrationTokenException
 import java.util.UUID
 
@@ -15,8 +15,8 @@ class RegisterConfirmUseCase(
     operator fun invoke(
         token: String,
         fullName: String,
-        birthday: String,
-        password: String,
+        birthdayRaw: String,
+        passwordRaw: String,
     ): User {
         val registerKey = "register:token:$token"
 
@@ -25,13 +25,17 @@ class RegisterConfirmUseCase(
             throw InvalidRegistrationTokenException()
         }
 
-        val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
+        val birthday = Birthday.parse(birthdayRaw)
+        val password = Password.fromPlain(passwordRaw)
+
+        val hashedPassword = password.hashed
+
         val user = User(
             id = UUID.randomUUID(),
             email = email,
             password = hashedPassword,
             fullName = fullName,
-            birthday = LocalDate.parse(birthday)
+            birthday = birthday.value
         )
         userRepository.save(user)
 

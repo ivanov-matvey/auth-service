@@ -4,13 +4,16 @@ import application.util.redisLimiter
 import domain.service.CodeType
 import domain.service.MailService
 import domain.service.RedisService
+import domain.value.Email
 import shared.TooManyRequestsException
 
 class SendCodeUseCase(
     private val redisService: RedisService,
     private val mailService: MailService
 ) {
-    operator fun invoke(email: String, type: CodeType = CodeType.REGISTER) {
+    operator fun invoke(emailRaw: String, type: CodeType = CodeType.REGISTER) {
+        val email = Email.create(emailRaw)
+
         val confirmKey = "email:confirm:$email"
         val requestCountKey = "email:request-count:$email"
 
@@ -25,7 +28,7 @@ class SendCodeUseCase(
             ttlSeconds = 3600
         )
 
-        mailService.sendVerificationEmail(email, verificationCode, type)
+        mailService.sendVerificationEmail(email.toString(), verificationCode, type)
     }
 
     private fun generateVerificationCode(): String {

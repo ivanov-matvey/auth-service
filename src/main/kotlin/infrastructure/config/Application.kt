@@ -16,7 +16,6 @@ import application.usecase.RefreshTokenUseCase
 import application.usecase.RegisterConfirmUseCase
 import application.usecase.SendCodeUseCase
 import application.usecase.VerifyCodeUseCase
-import domain.service.EmailValidationService
 import infrastructure.persistence.repository.PostgresUserRepositoryImpl
 import infrastructure.service.JwtServiceImpl
 import infrastructure.service.MailServiceImpl
@@ -36,14 +35,12 @@ fun Application.module() {
 
     val redisService = RedisServiceImpl(RedisProvider.commands)
     val userRepository = PostgresUserRepositoryImpl()
-    val emailValidationService = EmailValidationService()
     val mailService = MailServiceImpl
     val jwtService = JwtServiceImpl
 
     val registerByCodeService = RegisterByCodeService(
         checkUserUseCase = CheckUserUseCase(
             userRepository = userRepository,
-            emailValidationService = emailValidationService,
         ),
         sendCodeUseCase = SendCodeUseCase(
             redisService = redisService,
@@ -54,7 +51,6 @@ fun Application.module() {
     val registerByCodeVerifyService = RegisterByCodeVerifyService(
         checkUserUseCase = CheckUserUseCase(
             userRepository = userRepository,
-            emailValidationService = emailValidationService,
         ),
         verifyCodeUseCase = VerifyCodeUseCase(
             redisService = redisService
@@ -72,7 +68,6 @@ fun Application.module() {
     val loginByCodeService = LoginByCodeService(
         checkUserUseCase = CheckUserUseCase(
             userRepository = userRepository,
-            emailValidationService = emailValidationService
         ),
         sendCodeUseCase = SendCodeUseCase(
             redisService = redisService,
@@ -83,7 +78,6 @@ fun Application.module() {
     val loginByCodeVerifyService = LoginByCodeVerifyService(
         checkUserUseCase = CheckUserUseCase(
             userRepository = userRepository,
-            emailValidationService = emailValidationService,
         ),
         verifyCodeUseCase = VerifyCodeUseCase(
             redisService = redisService
@@ -97,7 +91,6 @@ fun Application.module() {
     val loginByPasswordService = LoginByPasswordService(
         checkUserUseCase = CheckUserUseCase(
             userRepository = userRepository,
-            emailValidationService = emailValidationService,
         ),
         loginByPasswordUseCase = LoginByPasswordUseCase(
             userRepository = userRepository,

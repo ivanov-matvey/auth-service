@@ -7,6 +7,8 @@ import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import presentation.dto.ErrorResponse
+import shared.InvalidAccessTokenException
+import shared.InvalidBirthdayException
 import shared.InvalidConfirmationCodeException
 import shared.InvalidEmailException
 import shared.InvalidPasswordException
@@ -129,6 +131,26 @@ fun Application.configureStatusPages() {
                 HttpStatusCode.BadRequest,
                 ErrorResponse(
                     title = cause.message ?: "Неверный токен обновления.",
+                    status = 400
+                )
+            )
+        }
+
+        exception<InvalidAccessTokenException> { call, cause ->
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ErrorResponse(
+                    title = cause.message ?: "Неверный токен доступа.",
+                    status = 400
+                )
+            )
+        }
+
+        exception<InvalidBirthdayException> { call, cause ->
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ErrorResponse(
+                    title = cause.message ?: "Неверная дата рождения.",
                     status = 400
                 )
             )

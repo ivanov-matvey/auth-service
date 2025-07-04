@@ -44,3 +44,6 @@ class InvalidAccessTokenException() : RuntimeException(
     "Неверный токен доступа."
 )
 
+class InvalidBirthdayException() : RuntimeException(
+    "Неверная дата рождения."
+)

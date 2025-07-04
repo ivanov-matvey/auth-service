@@ -5,5 +5,6 @@ interface MailService {
 }
 
 enum class CodeType {
-    REGISTER, LOGIN
+    REGISTER,
+    LOGIN,
 }

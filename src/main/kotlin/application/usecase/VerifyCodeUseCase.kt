@@ -2,12 +2,15 @@ package application.usecase
 
 import application.util.redisLimiter
 import domain.service.RedisService
+import domain.value.Email
 import shared.TooManyAttemptsException
 
 class VerifyCodeUseCase(
     private val redisService: RedisService
 ) {
-    operator fun invoke(email: String, code: String): Boolean {
+    operator fun invoke(emailRaw: String, code: String): Boolean {
+        val email = Email.create(emailRaw)
+
         val confirmKey = "email:confirm:$email"
         val verifyAttemptsKey = "email:verify-attempts:$email"
 

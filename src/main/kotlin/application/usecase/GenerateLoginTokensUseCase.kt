@@ -8,6 +8,8 @@ class GenerateLoginTokensUseCase(
     private val redisService: RedisService,
     private val jwtService: JwtService
 ) {
+    private val ttlRefreshTokenSeconds = System.getenv("TTL_REFRESH_TOKEN").toLong()
+
     operator fun invoke(email: String): AuthTokensDTO {
         val confirmKey = "email:confirm:$email"
         val requestCountKey = "email:request-count:$email"
@@ -21,6 +23,8 @@ class GenerateLoginTokensUseCase(
         redisService.del(requestCountKey)
         redisService.del(lastRequestKey)
         redisService.del(verifyAttemptsKey)
+
+        redisService.setex("refresh:$refreshToken", "1", ttlRefreshTokenSeconds)
 
         return AuthTokensDTO(accessToken, refreshToken)
     }

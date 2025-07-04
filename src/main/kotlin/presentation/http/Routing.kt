@@ -7,6 +7,7 @@ import application.service.RefreshTokenService
 import application.service.RegisterByCodeService
 import application.service.RegisterByCodeVerifyService
 import application.usecase.RegisterConfirmUseCase
+import application.service.LogoutService
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
@@ -17,7 +18,8 @@ fun Application.configureRouting(
     loginByCodeService: LoginByCodeService,
     loginByCodeVerifyService: LoginByCodeVerifyService,
     loginByPasswordService: LoginByPasswordService,
-    refreshTokenService: RefreshTokenService
+    refreshTokenService: RefreshTokenService,
+    logoutService: LogoutService,
 ) {
     routing {
         route("/auth") {
@@ -36,12 +38,18 @@ fun Application.configureRouting(
                     loginByPasswordService = loginByPasswordService
                 )
             }
-        }
 
-        route("/refresh") {
-            refreshTokenRoutes(
-                refreshTokenService = refreshTokenService
-            )
+            route("/refresh") {
+                refreshTokenRoutes(
+                    refreshTokenService = refreshTokenService
+                )
+            }
+
+            route("/logout") {
+                logoutRoutes(
+                    logoutService = logoutService
+                )
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ package infrastructure.service
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import domain.service.JwtService
+import domain.service.ParsedJwt
 import java.util.Date
 
 object JwtServiceImpl : JwtService {
@@ -42,8 +43,24 @@ object JwtServiceImpl : JwtService {
 
             val decodedJWT = verifier.verify(token)
             decodedJWT.getClaim("email").asString()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
+
+    override fun parseToken(token: String): ParsedJwt {
+        val verifier = JWT
+            .require(Algorithm.HMAC256(secret))
+            .withAudience(audience)
+            .withIssuer(issuer)
+            .build()
+
+        val decodedJWT = verifier.verify(token)
+
+        val email = decodedJWT.getClaim("email").asString()
+        val expiration = decodedJWT.expiresAt
+
+        return ParsedJwt(email, expiration)
+    }
+
 }

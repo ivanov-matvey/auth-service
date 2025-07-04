@@ -3,17 +3,18 @@ package infrastructure.config
 import application.service.LoginByCodeService
 import application.service.LoginByCodeVerifyService
 import application.service.LoginByPasswordService
+import application.service.LogoutService
 import application.service.RefreshTokenService
 import application.service.RegisterByCodeService
 import application.service.RegisterByCodeVerifyService
 import application.usecase.CheckUserUseCase
-import application.usecase.GenerateAccessTokenUseCase
 import application.usecase.GenerateLoginTokensUseCase
 import application.usecase.GenerateRegisterTokenUseCase
 import application.usecase.LoginByPasswordUseCase
+import application.usecase.LogoutUseCase
+import application.usecase.RefreshTokenUseCase
 import application.usecase.RegisterConfirmUseCase
 import application.usecase.SendCodeUseCase
-import application.usecase.ValidateTokenUseCase
 import application.usecase.VerifyCodeUseCase
 import domain.service.EmailValidationService
 import infrastructure.persistence.repository.PostgresUserRepositoryImpl
@@ -109,10 +110,15 @@ fun Application.module() {
     )
 
     val refreshTokenService = RefreshTokenService(
-        validateTokenUseCase = ValidateTokenUseCase(
+        refreshTokenUseCase = RefreshTokenUseCase(
+            redisService = redisService,
             jwtService = jwtService
-        ),
-        generateAccessTokenUseCase = GenerateAccessTokenUseCase(
+        )
+    )
+
+    val logoutService = LogoutService(
+        logoutUseCase = LogoutUseCase(
+            redisService = redisService,
             jwtService = jwtService
         )
     )
@@ -126,6 +132,8 @@ fun Application.module() {
         loginByCodeVerifyService = loginByCodeVerifyService,
         loginByPasswordService = loginByPasswordService,
 
-        refreshTokenService = refreshTokenService
+        refreshTokenService = refreshTokenService,
+
+        logoutService = logoutService,
     )
 }

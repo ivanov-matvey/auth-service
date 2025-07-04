@@ -14,8 +14,12 @@ fun Route.refreshTokenRoutes(
     post {
         val request = call.receive<RefreshTokenRequest>()
 
-        val accessToken = refreshTokenService(request.refreshToken)
-
-        call.respond(HttpStatusCode.OK, RefreshTokenResponse(accessToken))
+        val tokens = refreshTokenService(request.refreshToken)
+        call.respond(HttpStatusCode.OK,
+            RefreshTokenResponse(
+                tokens.accessToken,
+                tokens.refreshToken
+            )
+        )
     }
 }

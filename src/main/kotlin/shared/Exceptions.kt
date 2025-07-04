@@ -39,3 +39,8 @@ class InvalidPasswordException() : RuntimeException(
 class InvalidRefreshTokenException() : RuntimeException(
     "Неверный токен обновления."
 )
+
+class InvalidAccessTokenException() : RuntimeException(
+    "Неверный токен доступа."
+)
+

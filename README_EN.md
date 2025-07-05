@@ -1,5 +1,6 @@
 # Auth Service
 A secure authentication microservice implemented in `Kotlin` using `Ktor`.
+
 Русская версия: [README.md](README.md)
 
 ---
@@ -27,16 +28,16 @@ A secure authentication microservice implemented in `Kotlin` using `Ktor`.
 ---
 
 ### Эндпоинты
-| Method | URL                       | Description                                                   |
-|-------|---------------------------|------------------------------------------------------------|
-| POST  | `/auth/register`          | Sending registration code to email                         |
-| POST  | `/auth/register/verify`   | Code verification -> issue **register** token                |
-| POST  | `/auth/register/complete` | Completion of registration via **register** token            |
-| POST  | `/auth/login/code`        | Sending authorization code to email                         |
-| POST  | `/auth/login/verify`      | Code verification -> issue **access** and **refresh** tokens   |
-| POST  | `/auth/login/password`    | Password verification -> issue **access** and **refresh** tokens |
-| POST  | `/auth/refresh`           | Update **access** and **refresh** tokens                |
-| POST  | `/auth/logout`            | Revocation of **access** and **refresh** tokens                     |
+| Method | URL                       | Description                                                      |
+|--------|---------------------------|------------------------------------------------------------------|
+| POST   | `/auth/register`          | Sending registration code to email                               |
+| POST   | `/auth/register/verify`   | Code verification -> issue **register** token                    |
+| POST   | `/auth/register/complete` | Completion of registration via **register** token                |
+| POST   | `/auth/login/code`        | Sending authorization code to email                              |
+| POST   | `/auth/login/verify`      | Code verification -> issue **access** and **refresh** tokens     |
+| POST   | `/auth/login/password`    | Password verification -> issue **access** and **refresh** tokens |
+| POST   | `/auth/refresh`           | Update **access** and **refresh** tokens                         |
+| POST   | `/auth/logout`            | Revocation of **access** and **refresh** tokens                  |
 
 ---
 

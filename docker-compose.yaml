@@ -1,0 +1,54 @@
+services:
+  auth-service:
+    build:
+      context: .
+    depends_on:
+      postgres-users:
+        condition: service_healthy
+      redis-tokens:
+        condition: service_healthy
+    env_file:
+      - .env
+    ports:
+      - "${AUTH_SERVICE_PORT}:${AUTH_SERVICE_PORT}"
+    networks:
+      - app-network
+
+  postgres-users:
+    image: postgres:latest
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_DB=${POSTGRES_USERS_DB}
+    volumes:
+      - postgres-users-data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_USERS_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  redis-tokens:
+    image: redis:latest
+    volumes:
+      - redis-tokens-data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+volumes:
+  postgres-users-data:
+  redis-tokens-data:
+
+networks:
+  app-network:
+    driver: bridge

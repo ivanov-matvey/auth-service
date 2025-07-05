@@ -252,66 +252,21 @@
         value: 1
         ttl: до истечения access
        ```
-    - Удаление записи `refresh:eyJ...4iI` 
-
----   
-
-### Структура базы данных
-##### Таблица `users`
-```sql
-CREATE TABLE users (
-    id UUID PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    full_name VARCHAR(255) NOT NULL,
-    birthday DATE NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE OR REPLACE FUNCTION update_updated_at() 
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = CURRENT_TIMESTAMP;
-RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER set_updated_at
-    BEFORE UPDATE ON users
-    FOR EACH ROW
-    EXECUTE FUNCTION update_updated_at();
-```
+    - Удаление записи `refresh:eyJ...4iI`
 
 ---
-### Переменные окружения
 
-```dotenv
-### AUTH SERVICE ###
-AUTH_SERVICE_PORT=8080            # Порт, на котором запускается Ktor-сервер
-
-### POSTGRES ###
-POSTGRES_USER=your_user           # Пользователь базы данных
-POSTGRES_PASSWORD=your_password   # Пароль
-POSTGRES_USERS_HOST=localhost     # Хост PostgreSQL (например: postgres или 127.0.0.1)
-POSTGRES_USERS_DB=users           # Название БД
-
-### REDIS ###
-REDIS_HOST=localhost              # Хост Redis (например: redis или 127.0.0.1)
-REDIS_PORT=6379                   # Порт Redis
-
-### MAIL (SMTP) ###
-SMTP_LOGIN=smtp@example.com       # SMTP логин
-SMTP_PASSWORD=your_smtp_password  # SMTP пароль
-SMTP_HOST=smtp.example.com        # SMTP сервер
-SMTP_PORT=587                     # SMTP порт
-MAIL_USER=noreply@example.com     # Отправитель
-TTL_VERIFICATION_CODE=600         # TTL проверочного кода (в секундах)
-
-### JWT ###
-JWT_SECRET=your_jwt_secret        # Секретный ключ
-JWT_AUDIENCE=auth-users           # Аудитория токена
-JWT_ISSUER=auth-service           # Имя или URL сервиса
-TTL_ACCESS_TOKEN=3600             # Время жизни access токена (в секундах)
-TTL_REFRESH_TOKEN=604800          # Время жизни refresh токена (в секундах)
+### Быстрый запуск
+- Клонировать репозиторий
+```bash
+git clone https://github.com/ivanov-matvey/auth-service
+cd auth-service
+```
+- Собрать проект
+```bash
+./gradlew build
+```
+- Запустить сервисы через Docker Compose
+```bash
+docker-compose up -d
 ```

@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlin)
     alias(libs.plugins.ktor)
@@ -5,10 +7,22 @@ plugins {
 }
 
 group = "dev.matvenoid"
-version = "0.0.1"
+version = "0.1.0"
 
 application {
     mainClass = "io.ktor.server.netty.EngineMain"
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(20))
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_20)
+    }
 }
 
 dependencies {

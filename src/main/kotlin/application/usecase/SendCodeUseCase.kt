@@ -11,6 +11,8 @@ class SendCodeUseCase(
     private val redisService: RedisService,
     private val mailService: MailService
 ) {
+    private val ttlVerificationCodeSeconds = System.getenv("TTL_VERIFICATION_CODE").toLong()
+
     operator fun invoke(emailRaw: String, type: CodeType = CodeType.REGISTER) {
         val email = Email.create(emailRaw)
 
@@ -18,14 +20,14 @@ class SendCodeUseCase(
         val requestCountKey = "email:request-count:$email"
 
         val verificationCode = generateVerificationCode()
-        redisService.setex(confirmKey, verificationCode, 600)
+        redisService.setex(confirmKey, verificationCode, ttlVerificationCodeSeconds)
 
         redisLimiter(
             redisService = redisService,
             key = requestCountKey,
             limit = 5,
             exception = { ttl -> TooManyRequestsException(ttl) },
-            ttlSeconds = 3600
+            ttlSeconds = 600
         )
 
         mailService.sendVerificationEmail(email.toString(), verificationCode, type)

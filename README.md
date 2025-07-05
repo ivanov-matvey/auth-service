@@ -1,5 +1,6 @@
 # Auth Service
 Безопасный микросервис аутентификации, реализованный на `Kotlin` с использованием `Ktor`.
+
 English version: [README_EN.md](README_EN.md)
 
 ---
